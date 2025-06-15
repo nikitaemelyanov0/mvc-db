@@ -1,36 +1,36 @@
 <?php 
 
+require_once 'db.php';
+
 class UserController{
 
-    public function registrationGet() {
-        // Возврат шаблона регистрации
+    protected $userModel;
+
+    public function __construct() {
+        $db = (new Database())->getConnection();
+        $this->userModel = new User($db);
+    }
+
+    // Показ формы регистрации (GET)
+    public function registerationGet() {
         return new View("registration");
     }
 
-    public function registrationPost() {
-        require_once 'db.php';
-        $login = $_POST['login'];
-        $name = $_POST['name'];
-        $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
-        $age = $_POST['age'];
-        
-        $result = $conn->query("SELECT * FROM `users` WHERE login='$login'");
-        $array = $result->fetch_assoc();
-        
-        if (strlen($_POST['password'])<6) {
-            echo 'Пароль должен содержать минимум 6 символов';
-        }
-        else if ($array>0) {
-            echo 'Пользователь с таким логином уже существует';
-        }
-        else {
-            $conn->query("INSERT INTO `users`(login, name, password, date_of_birth) VALUES('$login', '$name', '$password', '$age')");
-    
-            $_SESSION['name'] = $name;
-            $_SESSION['age'] = $age;
-            $_SESSION['password'] = $_POST['password'];
-            $_SESSION['login'] = $login;
-            return new View('index');
+    // Обработка формы (POST)
+    public function registerationPost() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $name = trim($_POST['name']);
+            $phone = trim($_POST['phone']);
+            $email = trim($_POST['email']);
+            $login = trim($_POST['login']);            
+            $password = trim($_POST['password']);
+            
+            if ($this->userModel->register($name, $phone, $email, $login, $password)) {
+                header("Location: /index.php");
+                exit;
+            } else {
+                die("Ошибка регистрации!");
+            }
         }
     }
 
@@ -79,3 +79,4 @@ class UserController{
         else echo 'Неправильно набран пароль'; 
     }
 }
+

@@ -2,8 +2,8 @@
 
 Route::get('/', [MainController::class, 'indexGet']);
 
-Route::get('/registration', [UserController::class, 'registrationGet']);
-Route::post('/registration', [UserController::class, 'registrationPost']);
+Route::get('/registeration', [UserController::class, 'registerationGet']);
+Route::post('/registeration', [UserController::class, 'registerationPost']);
 
 Route::get('/authorization', [UserController::class, 'authorizationGet']);
 Route::post('/authorization', [UserController::class, 'authorizationPost']);
